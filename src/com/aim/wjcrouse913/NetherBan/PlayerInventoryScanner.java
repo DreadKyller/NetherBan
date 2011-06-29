@@ -29,6 +29,10 @@ public class PlayerInventoryScanner{
 		
 		File main = new File(invdir);
 		
+		if(!main.getParentFile().exists()){
+			main.getParentFile().mkdirs();
+		}
+		
 		if(!main.exists()){
 			try{
 				main.createNewFile();
