@@ -42,7 +42,7 @@ public class PlayerInventoryScanner{
 		
 		for(int a=0;a<i.length;a++){
 			
-			if(i[a].getType()!=null){
+			if(i[a]!=null){
 				conf.setProperty(a+".material", i[a].getType().name());
 				conf.setProperty(a+".amount", String.valueOf(i[a].getAmount()));
 			}else{

@@ -328,11 +328,13 @@ public class NetherBan extends JavaPlugin {
 			Player safe = this.getServer().getPlayer(p);
 			if(safe instanceof Player){
 				try{
-					Writer output = null;
+					BufferedWriter output = null;
 					String text = safe.getName();
 					File file = new File("plugins/NetherBan/whitelist.txt");
 					output = new BufferedWriter(new FileWriter(file));
-					output.write(text);
+					output.append(text);
+					output.newLine();
+					output.flush();
 					output.close();
 				}catch (IOException e){
 					e.printStackTrace();
@@ -363,14 +365,15 @@ public class NetherBan extends JavaPlugin {
 			if(!playerSafe.containsKey(banned)){
 				if(banned instanceof Player){
 					try {
-						Writer output = null;
+						BufferedWriter output = null;
 						String text = banned.getName();
 						File file = BanList;
 						if(!file.exists()){
 							file.createNewFile();
 						}
 						output = new BufferedWriter(new FileWriter(file));
-						output.write(text);
+						output.append(text);
+						output.newLine();
 						output.flush();
 						output.close();
 						System.out.println("[NetherBan] " + banned.getDisplayName() + " was banished to the Nether!");
@@ -394,11 +397,13 @@ public class NetherBan extends JavaPlugin {
 					}
 				}else{
 					try {
-						Writer output = null;
+						BufferedWriter output = null;
 						String text = p;
 						File file = new File("plugins/NetherBan/banished.txt");
 						output = new BufferedWriter(new FileWriter(file));
-						output.write(text);
+						output.append(text);
+						output.newLine();
+						output.flush();
 						output.close();
 						System.out.println("[NetherBan] " + p + " was banished to the Nether!");
 						sender.sendMessage(prefix + " " + ChatColor.GREEN + p + ChatColor.GRAY + " has been banished to the Nether!");
@@ -433,11 +438,13 @@ public class NetherBan extends JavaPlugin {
 						while ((str = in.readLine()) != null) {
 							String name = unbanned.getName();
 							if(str.equals(name)){
-								Writer output = null;
+								BufferedWriter output = null;
 								String text = " ";
 								File file = new File("plugins/NetherBan/banished.txt");
 								output = new BufferedWriter(new FileWriter(file));
-								output.write(text);
+								output.append(text);
+								output.newLine();
+								output.flush();
 								output.close();
 								invs.use(unbanned);
 								unbanned.getInventory().setContents(invs.load());
@@ -458,11 +465,13 @@ public class NetherBan extends JavaPlugin {
 						while ((str = in.readLine()) != null) {
 							String name = p;
 							if(str.equals(name)){
-								Writer output = null;
+								BufferedWriter output = null;
 								String text = " ";
 								File file = new File("plugins/NetherBan/banished.txt");
 								output = new BufferedWriter(new FileWriter(file));
-								output.write(text);
+								output.append(text);
+								output.newLine();
+								output.flush();
 								output.close();
 								sender.sendMessage("[" + ChatColor.DARK_RED + "NetherBan" + ChatColor.WHITE + "] " + ChatColor.GREEN + p + ChatColor.GRAY + " is offline but was unbanished from the Nether! Reload server for it to take effect!");
 								return true;
