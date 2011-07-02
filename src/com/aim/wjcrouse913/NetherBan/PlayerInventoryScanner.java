@@ -11,6 +11,7 @@ import org.bukkit.util.config.Configuration;
 
 public class PlayerInventoryScanner{
 	private String invdir;
+	private String dir;
 	
 	private Player player;
 	private PlayerInventory inv;
@@ -21,17 +22,15 @@ public class PlayerInventoryScanner{
 	public void use(Player p){
 		this.inv=p.getInventory();
 		this.player=p;
-		this.invdir = NetherBan.mainDirectory+File.separator+"PlayerINV"+File.separator+p.getName()+".yml";
+		this.invdir = NetherBan.mainDirectory+"/PlayerINV/"+NetherBan.normalname+"/"+p.getName()+".yml";
+		this.dir=NetherBan.mainDirectory+"/PlayerINV/"+NetherBan.normalname;
 	}
 	
 	public void save(){
 		ItemStack[] i = this.inv.getContents();
 		
 		File main = new File(invdir);
-		
-		if(!main.getParentFile().exists()){
-			main.getParentFile().mkdirs();
-		}
+		main.mkdirs();
 		
 		if(!main.exists()){
 			try{

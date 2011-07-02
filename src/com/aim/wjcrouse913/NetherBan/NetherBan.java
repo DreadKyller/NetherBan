@@ -27,6 +27,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.util.config.Configuration;
 
 /* This program is free software. It comes without any warranty, to
  * the extent permitted by applicable law. You can redistribute it
@@ -59,10 +60,10 @@ public class NetherBan extends JavaPlugin {
 	
 	public PlayerInventoryScanner invs = new PlayerInventoryScanner();
 	
-	static String mainDirectory = "plugins/NetherBan";
-	static File ConfigCreate = new File(mainDirectory + File.separator + "NetherBan.prop");
-	static File Whitelist = new File(mainDirectory + File.separator + "whitelist.txt");
-	static File BanList = new File(mainDirectory + File.separator + "banished.txt");
+	static String mainDirectory = "/plugins/NetherBan/";
+	static File ConfigCreate = new File(mainDirectory + "NetherBan.prop");
+	static File Whitelist = new File(mainDirectory + "whitelist.yml");
+	static File BanList = new File(mainDirectory + "banished.yml");
 	static Properties prop = new Properties();
 	
     public Map<Player, Boolean> playerSafe = new HashMap<Player, Boolean>();
@@ -107,6 +108,7 @@ public class NetherBan extends JavaPlugin {
 		commands = Boolean.parseBoolean(prop.getProperty("Banished-Cant-Use-Commands"));
 		nethername = prop.getProperty("Nether-World-Name");
 		normalname = prop.getProperty("Normal-World-Name");
+		BanList=new File(mainDirectory+nethername+"/banished.yml");
 		pvp = Boolean.parseBoolean(prop.getProperty("PvP-Disabled-For-Banished"));
 		emptybucket = Boolean.parseBoolean(prop.getProperty("Banished-Cant-Empty-Bucket"));
 		build = Boolean.parseBoolean(prop.getProperty("Banished-Cant-Build"));
@@ -328,18 +330,17 @@ public class NetherBan extends JavaPlugin {
 			Player safe = this.getServer().getPlayer(p);
 			if(safe instanceof Player){
 				try{
-					BufferedWriter output = null;
 					String text = safe.getName();
-					File file = new File("plugins/NetherBan/whitelist.txt");
-					output = new BufferedWriter(new FileWriter(file));
-					output.append(text);
-					output.newLine();
-					output.flush();
-					output.close();
+					File file = new File("/plugins/NetherBan/whitelist.yml");
+					file.mkdirs();
+					if(!file.exists()){file.createNewFile();}
+					Configuration banwl = new Configuration(file);
+					banwl.load();
+					banwl.setProperty(text, safe.getUniqueId());
+					banwl.save();
 				}catch (IOException e){
 					e.printStackTrace();
 					return true;
-
 				}
 				playerSafe.put(safe, false);
 				safe.sendMessage(prefix + ChatColor.GRAY + " You have been added to the Whitelist!");
@@ -365,17 +366,17 @@ public class NetherBan extends JavaPlugin {
 			if(!playerSafe.containsKey(banned)){
 				if(banned instanceof Player){
 					try {
-						BufferedWriter output = null;
 						String text = banned.getName();
 						File file = BanList;
+						file.mkdirs();
 						if(!file.exists()){
 							file.createNewFile();
 						}
-						output = new BufferedWriter(new FileWriter(file));
-						output.append(text);
-						output.newLine();
-						output.flush();
-						output.close();
+						if(!file.exists()){file.createNewFile();}
+						Configuration ban = new Configuration(file);
+						ban.load();
+						ban.setProperty(text, banned.getUniqueId());
+						ban.save();
 						System.out.println("[NetherBan] " + banned.getDisplayName() + " was banished to the Nether!");
 						if(lightning == true){
 							banned.getWorld().strikeLightning(banned.getLocation());
@@ -397,14 +398,14 @@ public class NetherBan extends JavaPlugin {
 					}
 				}else{
 					try {
-						BufferedWriter output = null;
 						String text = p;
-						File file = new File("plugins/NetherBan/banished.txt");
-						output = new BufferedWriter(new FileWriter(file));
-						output.append(text);
-						output.newLine();
-						output.flush();
-						output.close();
+						File file = BanList;
+						file.mkdirs();
+						if(!file.exists()){file.createNewFile();}
+						Configuration ban = new Configuration(file);
+						ban.load();
+						ban.setProperty(text, "-0.0");
+						ban.save();
 						System.out.println("[NetherBan] " + p + " was banished to the Nether!");
 						sender.sendMessage(prefix + " " + ChatColor.GREEN + p + ChatColor.GRAY + " has been banished to the Nether!");
 						return true;
@@ -431,54 +432,45 @@ public class NetherBan extends JavaPlugin {
 			if(args.length == 1){
 				String p = args[0];
 				Player unbanned = this.getServer().getPlayer(p);
+				File filei = BanList;
+				filei.mkdirs();
 				if(unbanned instanceof Player){
 					try {
-						BufferedReader in = new BufferedReader(new FileReader("plugins/NetherBan/banished.txt"));
-						String str;
-						while ((str = in.readLine()) != null) {
-							String name = unbanned.getName();
-							if(str.equals(name)){
-								BufferedWriter output = null;
-								String text = " ";
-								File file = new File("plugins/NetherBan/banished.txt");
-								output = new BufferedWriter(new FileWriter(file));
-								output.append(text);
-								output.newLine();
-								output.flush();
-								output.close();
-								invs.use(unbanned);
-								unbanned.getInventory().setContents(invs.load());
-								playerBanish.remove(unbanned);
-								unbanned.teleport(this.getServer().getWorld(normalname).getSpawnLocation());
-								sender.sendMessage("[" + ChatColor.DARK_RED + "NetherBan" + ChatColor.WHITE + "] " + ChatColor.GREEN + unbanned.getDisplayName() + ChatColor.GRAY + " unbanished from the Nether!");
-								unbanned.sendMessage(prefix + ChatColor.GRAY + " You have been freed from the Nether!");
-								return true;
-							}
+						if(!filei.exists()){
+							filei.createNewFile();
+						}
+						Configuration bans = new Configuration(filei);
+						String name = unbanned.getName();
+						if(bans.getProperty(name)!=null){
+							String text = " ";
+							bans.load();
+							bans.removeProperty(text);
+							bans.save();
+							invs.use(unbanned);
+							unbanned.getInventory().setContents(invs.load());
+							playerBanish.remove(unbanned);
+							unbanned.teleport(this.getServer().getWorld(normalname).getSpawnLocation());
+							sender.sendMessage("[" + ChatColor.DARK_RED + "NetherBan" + ChatColor.WHITE + "] " + ChatColor.GREEN + unbanned.getDisplayName() + ChatColor.GRAY + " unbanished from the Nether!");
+							unbanned.sendMessage(prefix + ChatColor.GRAY + " You have been freed from the Nether!");
+							return true;
 						}
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
 				}else{
 					try {
-						BufferedReader in = new BufferedReader(new FileReader("plugins/NetherBan/banished.txt"));
-						String str;
-						while ((str = in.readLine()) != null) {
-							String name = p;
-							if(str.equals(name)){
-								BufferedWriter output = null;
-								String text = " ";
-								File file = new File("plugins/NetherBan/banished.txt");
-								output = new BufferedWriter(new FileWriter(file));
-								output.append(text);
-								output.newLine();
-								output.flush();
-								output.close();
-								sender.sendMessage("[" + ChatColor.DARK_RED + "NetherBan" + ChatColor.WHITE + "] " + ChatColor.GREEN + p + ChatColor.GRAY + " is offline but was unbanished from the Nether! Reload server for it to take effect!");
-								return true;
-							}else{
-								sender.sendMessage(prefix + " " + ChatColor.GREEN + p + ChatColor.GRAY + " is not banished!");
-								return true;
-							}
+						if(!filei.exists()){filei.createNewFile();}
+						Configuration bans = new Configuration(filei);
+						if(bans.getProperty(p)!=null){
+							String text = " ";
+							bans.load();
+							bans.removeProperty(text);
+							bans.save();
+							sender.sendMessage(prefix + " " + ChatColor.GREEN + p + ChatColor.GRAY + " is offline but was unbanished from the Nether! Reload server for it to take effect!");
+							return true;
+						}else{
+							sender.sendMessage(prefix + " " + ChatColor.GREEN + p + ChatColor.GRAY + " is not banished!");
+							return true;
 						}
 					} catch (IOException e) {
 						e.printStackTrace();
@@ -489,19 +481,19 @@ public class NetherBan extends JavaPlugin {
 	}
 	public boolean onPlayerKick(CommandSender sender, String[] args){
 		if(args.length < 1){
-			sender.sendMessage("[" + ChatColor.DARK_RED + "NetherBan" + ChatColor.WHITE + "] " + ChatColor.RED + "Not enough arguments!");
+			sender.sendMessage(prefix + ChatColor.RED + " Not enough arguments!");
 			return false;
 		}
 		if(args.length > 1){
-			sender.sendMessage("[" + ChatColor.DARK_RED + "NetherBan" + ChatColor.WHITE + "] " + ChatColor.RED + "Too many arguments!");
+			sender.sendMessage(prefix + ChatColor.RED + " Too many arguments!");
 			return false;
 		}
 		if(args.length == 1){
 			String p = args[0];
 			Player kicked = this.getServer().getPlayer(p);
 			if(kicked instanceof Player){
-				sender.sendMessage("[" + ChatColor.DARK_RED + "NetherBan" + ChatColor.WHITE + "] " + ChatColor.GREEN + kicked.getDisplayName() + ChatColor.GRAY + " kicked to the Nether!");
-	        	kicked.sendMessage("[" + ChatColor.DARK_RED + "NetherBan" + ChatColor.WHITE + "] " + ChatColor.GRAY + "You have been kicked to the Nether!");
+				sender.sendMessage(prefix +" "+ ChatColor.GREEN + kicked.getDisplayName() + ChatColor.GRAY + " kicked to the Nether!");
+	        	kicked.sendMessage(prefix + ChatColor.GRAY + " You have been kicked to the Nether!");
 	        	
 	        	
 	        	
@@ -519,7 +511,7 @@ public class NetherBan extends JavaPlugin {
 	          if (permissionsPlugin != null) {
 	              this.permissionHandler = ((Permissions) permissionsPlugin).getHandler();
 	          } else {
-	              log.info("[NetherBan] Permission system not detected, defaulting to OP");
+	              log.info(prefix+" Permission system not detected, defaulting to OP");
 	          }
 	      }
 	}
