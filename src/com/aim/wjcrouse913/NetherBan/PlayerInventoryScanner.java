@@ -16,7 +16,10 @@ public class PlayerInventoryScanner{
 	private Player player;
 	private PlayerInventory inv;
 	
-	public PlayerInventoryScanner(){
+	private NetherBan plu;
+	
+	public PlayerInventoryScanner(NetherBan plug){
+		plu=plug;
 	}
 	
 	public void use(Player p){
@@ -70,7 +73,7 @@ public class PlayerInventoryScanner{
 		
 		int i=0;
 		
-		for(String s : conf.getKeys("")){
+		for(String s : conf.getKeys()){
 			
 			if(i<36){
 				if(!conf.getString(s+".material").equalsIgnoreCase("null")){
