@@ -4,10 +4,11 @@ import java.io.File;
 import java.io.IOException;
 
 import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.util.config.Configuration;
 
 public class PlayerInventoryScanner{
 	private String invdir;
@@ -43,20 +44,24 @@ public class PlayerInventoryScanner{
 			}
 		}
 		
-		Configuration conf = new Configuration(main);
-		conf.load();
+		FileConfiguration conf = YamlConfiguration.loadConfiguration(main);
 		
 		for(int a=0;a<i.length;a++){
 			
 			if(i[a]!=null){
-				conf.setProperty(a+".material", i[a].getType().name());
-				conf.setProperty(a+".amount", String.valueOf(i[a].getAmount()));
+				conf.set(a+".material", i[a].getType().name());
+				conf.set(a+".amount", String.valueOf(i[a].getAmount()));
 			}else{
-				conf.setProperty(a+".material", "null");
-				conf.setProperty(a+".amount", "0");
+				conf.set(a+".material", "null");
+				conf.set(a+".amount", "0");
 			}
 		}
-		conf.save();
+		try {
+			conf.save(main);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public ItemStack[] load(){
@@ -68,12 +73,11 @@ public class PlayerInventoryScanner{
 			return player.getInventory().getContents();
 		}
 		
-		Configuration conf = new Configuration(main);
-		conf.load();
+		FileConfiguration conf = YamlConfiguration.loadConfiguration(main);
 		
 		int i=0;
 		
-		for(String s : conf.getKeys()){
+		for(String s : conf.getKeys(false)){
 			
 			if(i<36){
 				if(!conf.getString(s+".material").equalsIgnoreCase("null")){

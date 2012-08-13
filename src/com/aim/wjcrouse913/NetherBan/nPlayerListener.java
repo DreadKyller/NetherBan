@@ -7,24 +7,26 @@ import java.io.IOException;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
-import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
 
 
-public class nPlayerListener extends PlayerListener {
+public class nPlayerListener implements Listener {
 	public static NetherBan plugin;
 
 	public nPlayerListener(NetherBan instance) {
 		plugin = instance;
 		
 	}
-	@Override
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event){
 		if(NetherBan.commands == true){
 			Player player = event.getPlayer();
@@ -34,6 +36,7 @@ public class nPlayerListener extends PlayerListener {
 			}
 		}
 	}
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerJoin(PlayerJoinEvent event){
 		try {
 		    BufferedReader in = new BufferedReader(new FileReader("plugins/NetherBan/banished.txt"));
@@ -67,6 +70,7 @@ public class nPlayerListener extends PlayerListener {
 
 		}
 	}
+	@EventHandler(priority = EventPriority.HIGH)
     public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event){
     	if(NetherBan.emptybucket == true){
     		Player player = event.getPlayer();
@@ -76,7 +80,8 @@ public class nPlayerListener extends PlayerListener {
     		}
     	}
     }
-	public void onPlayerChat(PlayerChatEvent event){
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onPlayerChat(AsyncPlayerChatEvent event){
 		if(NetherBan.mute == true){
 			Player player = event.getPlayer();
 			if(plugin.playerBanish.containsKey(player)){
@@ -86,6 +91,7 @@ public class nPlayerListener extends PlayerListener {
 			}
 		}
 	}
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerPortal(PlayerPortalEvent event){
 		Player player = event.getPlayer();
 		if(plugin.playerBanish.containsKey(player)){
@@ -93,7 +99,7 @@ public class nPlayerListener extends PlayerListener {
 			event.setCancelled(true);
 		}
 	}
-	@Override
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerRespawn(PlayerRespawnEvent event){
 		Player player = event.getPlayer();
 		if(plugin.playerBanish.containsKey(player)){
