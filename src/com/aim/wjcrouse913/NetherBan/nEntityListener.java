@@ -2,18 +2,20 @@ package com.aim.wjcrouse913.NetherBan;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.entity.EntityTargetEvent;
 
-public class nEntityListener extends EntityListener{
+public class nEntityListener implements Listener{
 	public static NetherBan plugin;
 
 	public nEntityListener(NetherBan instance){
 		plugin = instance;
 
 	}
+	@EventHandler
 	public void onEntityTarget(EntityTargetEvent event){
 		if(event.getTarget() instanceof Player){
 			Player player = (Player)event.getTarget();
@@ -24,6 +26,7 @@ public class nEntityListener extends EntityListener{
 			}
 		}
 	}
+	@EventHandler
 	public void onEntityDamage(EntityDamageEvent event){
 		if(NetherBan.pvp == true){
 			if(event.getEntity() instanceof Player){

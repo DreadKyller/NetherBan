@@ -5,17 +5,19 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockPlaceEvent;
 
-public class nBlockListener extends BlockListener {
+public class nBlockListener implements Listener {
 	public static NetherBan plugin;
 
 	public nBlockListener(NetherBan instance) {
 		plugin = instance;
 
 	}
+	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event){
 		Block block = event.getBlock();
 		Player player = event.getPlayer();
