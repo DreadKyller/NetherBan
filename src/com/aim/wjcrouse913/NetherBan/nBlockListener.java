@@ -6,7 +6,6 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -18,7 +17,7 @@ public class nBlockListener implements Listener {
 		plugin = instance;
 
 	}
-	@EventHandler(priority = EventPriority.HIGH)
+	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event){
 		Block block = event.getBlock();
 		Player player = event.getPlayer();
@@ -70,7 +69,6 @@ public class nBlockListener implements Listener {
 			}
 		}
 	}
-	@EventHandler(priority = EventPriority.HIGH)
 	public void onBlockBreak(BlockBreakEvent event){
 		Player player = event.getPlayer();
 		if(NetherBan.destroy == true){

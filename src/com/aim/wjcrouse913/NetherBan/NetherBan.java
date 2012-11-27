@@ -65,6 +65,9 @@ public class NetherBan extends JavaPlugin {
 	public Map<Player, Boolean> playerBanish = new HashMap<Player, Boolean>();
 	public Map<Player, PlayerInventory> inventories = new HashMap<Player, PlayerInventory>();
 
+	private final nEntityListener entityListener = new nEntityListener(this);
+	private final nPlayerListener playerListener = new nPlayerListener(this);
+	private final nBlockListener blockListener = new nBlockListener(this);
 	public static final Logger log = Logger.getLogger("Minecraft");
 
 	public String getMainDir() {
@@ -199,9 +202,9 @@ public class NetherBan extends JavaPlugin {
 			loadProcedure();
 		}
 		PluginManager pm = this.getServer().getPluginManager();
-		pm.registerEvents(new nEntityListener(this), this);
-		pm.registerEvents(new nPlayerListener(this), this);
-		pm.registerEvents(new nBlockListener(this), this);
+		pm.registerEvents(entityListener, this);
+		pm.registerEvents(playerListener, this);
+		pm.registerEvents(blockListener, this);
 		System.out.println("[NetherBan] NetherBan Enabled. Torturing souls...");
 	}
 
@@ -253,7 +256,7 @@ public class NetherBan extends JavaPlugin {
 					sender.sendMessage("---------------[ NetherBan Help ]---------------");
 					sender.sendMessage("-/nbban <player> -- Ban a Player to the Nether--");
 					sender.sendMessage("-/nbkick <player> - Kick a Player to the Nether-");
-					sender.sendMessage("-/nbunban <player>-Unban Player from ze Nether--");
+					sender.sendMessage("-/nbunban <player>-Unban Player from the Nether--");
 					sender.sendMessage("-/nbwl <player> -- Make a player unbanishable---");
 					sender.sendMessage("-/nbversion -- Shows NetherBan Version!---------");
 					sender.sendMessage("-/nbhelp -- Displays this message!--------------");
@@ -446,6 +449,7 @@ public class NetherBan extends JavaPlugin {
 						}
 						FileConfiguration ban = YamlConfiguration
 								.loadConfiguration(file);
+
 						ban.set(text, banned.getUniqueId());
 						ban.save(file);
 						System.out.println("[NetherBan] "
@@ -484,8 +488,7 @@ public class NetherBan extends JavaPlugin {
 							file.createNewFile();
 						}
 						FileConfiguration ban = YamlConfiguration
-								.loadConfiguration(file); // new
-															// Configuration(file);
+								.loadConfiguration(file);
 						ban.set(text, "-0.0");
 						ban.save(file);
 						System.out.println("[NetherBan] " + p
@@ -529,6 +532,7 @@ public class NetherBan extends JavaPlugin {
 					}
 					FileConfiguration bans = YamlConfiguration
 							.loadConfiguration(filei);
+					;
 					String name = unbanned.getName();
 					if (bans.get(name) != null) {
 						String text = " ";

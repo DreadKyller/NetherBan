@@ -8,10 +8,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
@@ -26,7 +25,7 @@ public class nPlayerListener implements Listener {
 		plugin = instance;
 		
 	}
-	@EventHandler(priority = EventPriority.HIGH)
+	@EventHandler
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event){
 		if(NetherBan.commands == true){
 			Player player = event.getPlayer();
@@ -36,7 +35,7 @@ public class nPlayerListener implements Listener {
 			}
 		}
 	}
-	@EventHandler(priority = EventPriority.HIGH)
+	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event){
 		try {
 		    BufferedReader in = new BufferedReader(new FileReader("plugins/NetherBan/banished.txt"));
@@ -70,7 +69,7 @@ public class nPlayerListener implements Listener {
 
 		}
 	}
-	@EventHandler(priority = EventPriority.HIGH)
+	@EventHandler
     public void onPlayerBucketEmpty(PlayerBucketEmptyEvent event){
     	if(NetherBan.emptybucket == true){
     		Player player = event.getPlayer();
@@ -80,7 +79,7 @@ public class nPlayerListener implements Listener {
     		}
     	}
     }
-	@EventHandler(priority = EventPriority.HIGH)
+	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent event){
 		if(NetherBan.mute == true){
 			Player player = event.getPlayer();
@@ -91,7 +90,7 @@ public class nPlayerListener implements Listener {
 			}
 		}
 	}
-	@EventHandler(priority = EventPriority.HIGH)
+	@EventHandler
 	public void onPlayerPortal(PlayerPortalEvent event){
 		Player player = event.getPlayer();
 		if(plugin.playerBanish.containsKey(player)){
@@ -99,7 +98,7 @@ public class nPlayerListener implements Listener {
 			event.setCancelled(true);
 		}
 	}
-	@EventHandler(priority = EventPriority.HIGH)
+	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent event){
 		Player player = event.getPlayer();
 		if(plugin.playerBanish.containsKey(player)){
